@@ -1,62 +1,62 @@
 ![NetBox](netbox_logo.svg "NetBox logo")
 
-# What is NetBox?
+# O que é NetBox?
 
-NetBox is an open source web application designed to help manage and document computer networks. Initially conceived by the network engineering team at [DigitalOcean](https://www.digitalocean.com/), NetBox was developed specifically to address the needs of network and infrastructure engineers. It encompasses the following aspects of network management:
+NetBox é um aplicativo da web de código aberto projetado para ajudar a gerenciar e documentar redes de computadores. Inicialmente concebido pela equipe de engenharia de rede da [DigitalOcean](https://www.digitalocean.com/), o NetBox foi desenvolvido especificamente para atender às necessidades dos engenheiros de rede e infraestrutura. Abrange os seguintes aspectos de gerenciamento de rede:
 
-* **IP address management (IPAM)** - IP networks and addresses, VRFs, and VLANs
-* **Equipment racks** - Organized by group and site
-* **Devices** - Types of devices and where they are installed
-* **Connections** - Network, console, and power connections among devices
-* **Virtualization** - Virtual machines and clusters
-* **Data circuits** - Long-haul communications circuits and providers
-* **Secrets** - Encrypted storage of sensitive credentials
+- **Gerenciamento de endereço IP (IPAM)** - redes e endereços IP, VRFs e VLANs
+- **Racks de equipamentos** - Organizados por grupo e local
+- **Dispositivos** - Tipos de dispositivos e onde estão instalados
+- **Conexões** - Rede, console e conexões de energia entre dispositivos
+- **Virtualização** - máquinas virtuais e clusters
+- **Circuitos de dados** - Circuitos e provedores de comunicações de longa distância
+- **Segredos** - Armazenamento criptografado de credenciais confidenciais
+  
+## O que NetBox não é
 
-## What NetBox Is Not
+Embora o NetBox se esforce para cobrir muitas áreas de gerenciamento de rede, o escopo de seu conjunto de recursos é necessariamente limitado. Isso garante que o desenvolvimento se concentre na funcionalidade central e que o aumento do escopo seja razoavelmente contido.Para esse fim, pode ser útil fornecer alguns exemplos de funcionalidade que o NetBox **não** oferece:
 
-While NetBox strives to cover many areas of network management, the scope of its feature set is necessarily limited. This ensures that development focuses on core functionality and that scope creep is reasonably contained. To that end, it might help to provide some examples of functionality that NetBox **does not** provide:
+- Monitoramento de rede
+- Servidor dns
+- Servidor RADIUS
+- Gerenciamento de configurações
+- Gestão de instalações
 
-* Network monitoring
-* DNS server
-* RADIUS server
-* Configuration management
-* Facilities management
+Dito isso, o NetBox _pode_ ser usado com grande efeito ao preencher ferramentas externas com os dados de que precisam para executar essas funções.
 
-That said, NetBox _can_ be used to great effect in populating external tools with the data they need to perform these functions.
+## Filosofia do desenho (*design*)
 
-## Design Philosophy
+NetBox foi projetado com os seguintes princípios em mente.
 
-NetBox was designed with the following tenets foremost in mind.
+### Replicar o mundo real
 
-### Replicate the Real World
+Uma consideração cuidadosa foi dada ao modelo de dados para garantir que ele possa refletir com precisão uma rede do mundo real. Por exemplo, os endereços IP são atribuídos não a dispositivos, mas a interfaces específicas anexadas a um dispositivo, e uma interface pode ter vários endereços IP atribuídos a ela.
 
-Careful consideration has been given to the data model to ensure that it can accurately reflect a real-world network. For instance, IP addresses are assigned not to devices, but to specific interfaces attached to a device, and an interface may have multiple IP addresses assigned to it.
+### Sirva como uma "fonte da verdade"
 
-### Serve as a "Source of Truth"
+NetBox pretende representar o estado _desejado_ de uma rede versus seu estado _operacional_. Como tal, a importação automática do estado da rede ativa é fortemente desencorajada. Todos os dados criados no NetBox devem primeiro ser examinados por um humano para garantir sua integridade. O NetBox pode então ser usado para preencher os sistemas de monitoramento e provisionamento com um alto grau de confiança.
 
-NetBox intends to represent the _desired_ state of a network versus its _operational_ state. As such, automated import of live network state is strongly discouraged. All data created in NetBox should first be vetted by a human to ensure its integrity. NetBox can then be used to populate monitoring and provisioning systems with a high degree of confidence.
+### Mantenha-o simples
 
-### Keep it Simple
+Quando dada a escolha entre uma solução relativamente simples [80% de solução](https://pt.wikipedia.org/wiki/Princ%C3%ADpio_de_Pareto) e uma solução completa muito mais complexa, a primeira geralmente será favorecida. Isso garante uma base de código enxuta com uma curva de aprendizado baixa.
 
-When given a choice between a relatively simple [80% solution](https://en.wikipedia.org/wiki/Pareto_principle) and a much more complex complete solution, the former will typically be favored. This ensures a lean codebase with a low learning curve.
+## Pilha de aplicativos
 
-## Application Stack
+NetBox é desenvolvido na plataforma Python [Django](https://djangoproject.com/) e utiliza um banco de dados [PostgreSQL](https://www.postgresql.org/). Ele é executado como um serviço WSGI por trás de um servidor HTTP de sua escolha.
 
-NetBox is built on the [Django](https://djangoproject.com/) Python framework and utilizes a [PostgreSQL](https://www.postgresql.org/) database. It runs as a WSGI service behind your choice of HTTP server.
+| Função                        | Componente        |
+| ----------------------------- | ----------------- |
+| Serviço HTTP                  | nginx ou Apache   |
+| Serviço WSGI                  | gunicorn ou uWSGI |
+| Inscrição                     | Django/Python     |
+| Base de dados                 | PostgreSQL 9.6+   |
+| Fila de tarefas               | Redis/django-rq   |
+| Acesso ao dispositivo ao vivo | NAPALM            |
 
-| Function           | Component         |
-|--------------------|-------------------|
-| HTTP service       | nginx or Apache   |
-| WSGI service       | gunicorn or uWSGI |
-| Application        | Django/Python     |
-| Database           | PostgreSQL 9.6+   |
-| Task queuing       | Redis/django-rq   |
-| Live device access | NAPALM            |
+## Versões Python Suportadas
 
-## Supported Python Versions
+NetBox suporta ambientes Python 3.6, 3.7 e 3.8 atualmente.(O suporte para Python 3.5 foi removido no NetBox v2.8.)
 
-NetBox supports Python 3.6, 3.7, and 3.8 environments currently. (Support for Python 3.5 was removed in NetBox v2.8.)
+## Começando
 
-## Getting Started
-
-See the [installation guide](installation/index.md) for help getting NetBox up and running quickly.
+Consulte o [guia de instalação](installation/index.md) para obter ajuda para colocar o NetBox em operação rapidamente.
